@@ -1,0 +1,55 @@
+name: splice_index
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - _libgcc_mutex=0.1=conda_forge
+  - _openmp_mutex=4.5=2_gnu
+  - bzip2=1.0.8=h4bc722e_7
+  - c-ares=1.33.1=heb4867d_0
+  - ca-certificates=2024.8.30=hbcca054_0
+  - hisat2=2.2.1=hdbdd923_6
+  - htslib=1.20=h5efdd21_2
+  - keyutils=1.6.1=h166bdaf_0
+  - krb5=1.21.3=h659f571_0
+  - ld_impl_linux-64=2.40=hf3520f5_7
+  - libcurl=8.8.0=hca28451_1
+  - libdeflate=1.21=h4bc722e_0
+  - libedit=3.1.20191231=he28a2e2_2
+  - libev=4.33=hd590300_2
+  - libffi=3.4.2=h7f98852_5
+  - libgcc=14.1.0=h77fa898_1
+  - libgcc-ng=14.1.0=h69a702a_1
+  - libgomp=14.1.0=h77fa898_1
+  - libnghttp2=1.58.0=h47da74e_1
+  - libnsl=2.0.1=hd590300_0
+  - libsqlite=3.46.0=hde9e2c9_0
+  - libssh2=1.11.0=h0841786_0
+  - libstdcxx=14.1.0=hc0a3c3a_1
+  - libstdcxx-ng=14.1.0=h4852527_1
+  - libuuid=2.38.1=h0b41bf4_0
+  - libxcrypt=4.4.36=hd590300_1
+  - libzlib=1.2.13=h4ab18f5_6
+  - ncurses=6.5=he02047a_1
+  - openssl=3.3.2=hb9d3cd8_0
+  - perl=5.32.1=7_hd590300_perl5
+  - pip=24.2=pyh8b19718_1
+  - python=3.10.14=hd12c33a_0_cpython
+  - readline=8.2=h8228510_1
+  - samtools=1.18=h50ea8bc_1
+  - setuptools=73.0.1=pyhd8ed1ab_0
+  - tk=8.6.13=noxft_h4845f30_101
+  - wheel=0.44.0=pyhd8ed1ab_0
+  - xz=5.2.6=h166bdaf_0
+  - zstd=1.5.6=ha6fb4c9_0
+  - pip:
+      - et-xmlfile==1.1.0
+      - numpy==2.1.1
+      - openpyxl==3.1.5
+      - pandas==2.2.2
+      - python-dateutil==2.9.0.post0
+      - pytz==2024.2
+      - six==1.16.0
+      - tzdata==2024.1
+prefix: /lustre/home/ikegamik/anaconda3/envs/splice_index
