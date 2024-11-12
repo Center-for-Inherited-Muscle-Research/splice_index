@@ -1,9 +1,9 @@
-#!/vcu_gpfs2/home/nej_lab/kameron_bin/nextflow
+#!/path/to/nextflow
 
 /*
  * Starting with a raw fastq aligns against reference inclusion and exclusion sequences using Hisat2
  * Counts reads for inclusion and exclusion products with samtools
- * Calculates Splice Index scores using normalized 95th percentile and median control
+ * Calculates Masseq scores using normalized 95th percentile and median control
  */
 
 
@@ -28,7 +28,6 @@ params.norms = null
  * Algin reads using Hisat2 and bash 
  */
 process Hisat2{
-        queue 'cpu-large'
 	executor 'slurm'
     clusterOptions '--export=ALL'
     tag "$sampleId"
@@ -45,19 +44,7 @@ process Hisat2{
 	script:
 		
 		"""
-		module load apptainer
-		singularity exec \
-		--env SLURM_CONF=/etc/slurm/slurm.conf \
-		--bind /etc/passwd,/etc/group \
-		--bind /etc/slurm/ \
-		--bind /lib64/libslurmfull-22.05.9.so:/usr/lib/x86_64-linux-gnu/libslurmfull-22.05.9.so \
-		--bind /bin/sbatch \
-		--bind /usr/lib64/slurm/ \
-		--bind /lib64/libmunge.so.2:/usr/lib/x86_64-linux-gnu/libmunge.so.2 \
-		--bind /lib64/libgfortran.so.5:/usr/lib/x86_64-linux-gnu/libgfortran.so.5 \
-		--bind /lib64/libquadmath.so.0:/usr/lib/x86_64-linux-gnu/libquadmath.so.0 \
-		--bind /run/munge \
-		/path/to/splice_index.sif hisat2 -x ${params.genome_dir}  -q -1 ${reads[0]}   -2 ${reads[1]}  --no-spliced-alignment --no-softclip   -S ${sampleId}.sam
+		hisat2 -x ${params.genome_dir}  -q -1 ${reads[0]}   -2 ${reads[1]}  --no-spliced-alignment --no-softclip   -S ${sampleId}.sam
 		"""
 }
 
@@ -66,7 +53,7 @@ process Hisat2{
  */
 process Counts{
 	executor 'slurm'
-    clusterOptions ''
+    clusterOptions '--export=ALL'
     tag "$sampleId"
 	publishDir "${params.out_dir}/counts", mode: 'copy'
 
@@ -81,19 +68,7 @@ process Counts{
 	script:
 		sampleId = sam[0].toString().split("_")[0]
 		"""
-		module load apptainer
-		singularity exec \
-                --env SLURM_CONF=/etc/slurm/slurm.conf \
-                --bind /etc/passwd,/etc/group \
-                --bind /etc/slurm/ \
-                --bind /lib64/libslurmfull-22.05.9.so:/usr/lib/x86_64-linux-gnu/libslurmfull-22.05.9.so \
-                --bind /bin/sbatch \
-                --bind /usr/lib64/slurm/ \
-                --bind /lib64/libmunge.so.2:/usr/lib/x86_64-linux-gnu/libmunge.so.2 \
-                --bind /lib64/libgfortran.so.5:/usr/lib/x86_64-linux-gnu/libgfortran.so.5 \
-                --bind /lib64/libquadmath.so.0:/usr/lib/x86_64-linux-gnu/libquadmath.so.0 \
-                --bind /run/munge \
-		/path/splice_index.sif samtools view -F 256 $sam | cut -f 3 | sort | uniq -c | sed 's@^\\s*@@' > ${sampleId}_counts.txt
+		samtools view -F 256 $sam | cut -f 3 | sort | uniq -c | sed 's@^\\s*@@' > ${sampleId}_counts.txt
 		"""
 }
 
@@ -102,7 +77,7 @@ process Counts{
  */
 process score{
 	executor 'slurm'
-    clusterOptions ''
+    clusterOptions '--export=ALL'
 	publishDir "${params.out_dir}/score", mode: 'copy'
 
 	input:
@@ -115,19 +90,7 @@ process score{
 	script:
 		count_list = counts.join(",")
 		"""
-		module load apptainer
-		singularity exec \
-                --env SLURM_CONF=/etc/slurm/slurm.conf \
-                --bind /etc/passwd,/etc/group \
-                --bind /etc/slurm/ \
-                --bind /lib64/libslurmfull-22.05.9.so:/usr/lib/x86_64-linux-gnu/libslurmfull-22.05.9.so \
-                --bind /bin/sbatch \
-                --bind /usr/lib64/slurm/ \
-                --bind /lib64/libmunge.so.2:/usr/lib/x86_64-linux-gnu/libmunge.so.2 \
-                --bind /lib64/libgfortran.so.5:/usr/lib/x86_64-linux-gnu/libgfortran.so.5 \
-                --bind /lib64/libquadmath.so.0:/usr/lib/x86_64-linux-gnu/libquadmath.so.0 \
-                --bind /run/munge \
-		 /path/to/splice_index.sif python3 /path/to/si_calc.py -f $count_list -n ${params.norms}
+		python /path/to/ki_calc_mass.py -f $count_list -n ${params.norms}
 		"""
 
 
